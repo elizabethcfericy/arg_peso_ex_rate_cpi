@@ -1,0 +1,43 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+#import plotly.plotly as py
+import statsmodels.api as sm
+import chart_studio.plotly
+import plotly.graph_objs as go
+import matplotlib.pyplot as plt
+from matplotlib import pylab
+from numpy import arange,array,ones
+from scipy import stats
+
+arg_peso_ex_rate_cpi = pd.read_excel('/Users/elizabethfericy/Documents/Python/Argentina_Data.xls', sheet_name = "Monthly")
+arg_peso_ex_rate_cpi = arg_peso_ex_rate_cpi.set_index("DATE")
+
+#table of statistical figures
+print(arg_peso_ex_rate_cpi.describe())
+
+#graph of data
+plt.figure()
+arg_peso_ex_rate_cpi.plot()
+ 
+#table of regression data
+
+X = arg_peso_ex_rate_cpi["CPI"]
+y = arg_peso_ex_rate_cpi["Exchange rate"]
+X = sm.add_constant(X)
+
+model = sm.OLS(y, X).fit()
+predictions = model.predict(X)
+
+model.summary()
+
+#scatterplot with regression line
+xi = arange(0,30)
+A = array([ xi, ones(30)])
+slope, intercept, r_value, p_value, std_err = stats.linregress(xi,y)
+line = slope*xi+intercept
+
+plt.plot(xi,y,'o', xi, line)
+pylab.title('Argentinian Peso/ USD Exchange Rate and CPI Data')
+ax = plt.gca()
+fig = plt.gcf()
